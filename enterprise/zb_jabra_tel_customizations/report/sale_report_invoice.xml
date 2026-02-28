@@ -1,0 +1,422 @@
+
+<odoo>
+
+
+<template id="external_layout_saudi">
+    <t t-if="not o" t-set="o" t-value="doc"/>
+
+    <t t-if="not company">
+        <!-- Multicompany -->
+        <t t-if="company_id">
+            <t t-set="company" t-value="company_id"/>
+        </t>
+        <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+            <t t-set="company" t-value="o.company_id.sudo()"/>
+        </t>
+        <t t-else="else">
+            <t t-set="company" t-value="res_company"/>
+        </t>
+    </t>
+
+    <!-- External Layout Standard Call -->
+   
+
+</template>
+<template id="external_layout_standard_new">
+        <t t-set="doc" t-value="docs and docs[0]"/>
+<t t-set="company" t-value="doc.company_id"/>
+<div class="header"
+     style="border-bottom:1px solid #000; padding:10px 15px;">
+
+    <!-- <div style="padding:12px;"> -->
+    <div style="padding:0px 12px 0px 12px;">
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+
+                <!-- LEFT SIDE (Arabic) -->
+                <td style="width:33%; text-align:right; direction:rtl; 
+                           font-size:12px; vertical-align:top; border:none;">
+                    <strong>
+                        <span t-esc="company.name"/>
+                    </strong><br/>
+
+                    <span t-esc="company.street"/><br/>
+                    <span t-esc="company.city"/> -
+                    <span t-esc="company.zip"/><br/>
+                    <span t-esc="company.country_id.name"/><br/>
+
+                    <t t-if="company.vat">
+                        الرقم الضريبي :
+                        <span t-esc="company.vat"/>
+                    </t>
+                </td>
+
+                <!-- CENTER LOGO -->
+                <td style="width:34%; text-align:center; 
+                           vertical-align:middle; border:none;">
+                    <img t-if="company.logo"
+                         t-att-src="image_data_uri(company.logo)"
+                         style="max-height:100px;"
+                         alt="Logo"/>
+                </td>
+
+                <!-- RIGHT SIDE (English) -->
+                <td style="width:33%; text-align:left; 
+                           font-size:12px; vertical-align:top; border:none;">
+                    <strong>
+                        <span t-esc="company.name"/>
+                    </strong><br/>
+
+                    <span t-esc="company.street"/><br/>
+                    <span t-esc="company.city"/> -
+                    <span t-esc="company.zip"/><br/>
+                    <span t-esc="company.country_id.name"/><br/>
+
+                    <t t-if="company.vat">
+                        VAT No :
+                        <span t-esc="company.vat"/>
+                    </t>
+                </td>
+
+            </tr>
+        </table>
+
+    </div>
+</div>
+    <div t-attf-class="article  o_company_#{company.id}_layout {{ '' }}" t-attf-style="background-image: url({{''}});" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')" 
+    style="margin-top:0px; padding-top:0px;">
+        
+    
+        <t t-out="0"/>
+        
+    </div>
+
+     <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+        <div class="text-center" style="border-top: 1px solid black;">
+            <ul class="list-inline">
+            </ul>
+            
+
+            
+            <div t-if="report_type == 'pdf' and display_name_in_footer" class="text-muted">
+                <span t-out="o.name">(document name)</span>
+            </div>
+            <div class="text-muted">
+            <span t-out="company.l10n_sa_edi_building_number"/>,<span t-out="company.street"></span>,<span t-out="company.street2"></span>,<span t-out="company.city">,</span><span t-out="company.state_id.name"></span><br/>
+            <span t-out="company.website"></span>,<span t-out="company.email"></span>,<span t-out="company.phone"></span>,<span t-out="company.mobile"></span>
+            </div>
+             <div class="text-muted" style="text-align: right; font-size: 14px;margin-top: -30px;">
+                <t  t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%y %H:%M:%S')" />
+            </div> 
+            <div t-if="report_type == 'pdf'" class="text-muted" style="text-align:right; margin-top: 20px;">
+                Page: <span class="page"/> / <span class="topage"/>
+            </div>
+           
+        </div>
+    </div> 
+</template>
+    
+	<template id="sale_report_template" >
+	<t t-call="zb_jabra_tel_customizations.external_layout_standard_new">
+         <main>
+           
+
+        <t t-foreach="docs" t-as="doc">
+	    <t>
+            
+	        <div class="quotation-report" style="font-size:11px;">
+	          
+
+                   <div style="text-align:center; margin-top:5px; margin-bottom:10px;">
+                        <span style="font-size:26px; font-weight:600;">
+                            Tax Invoice
+                        </span>
+                        
+                        <span style="font-size:26px; font-weight:600; direction:rtl;">
+                            فاتورة ضريبية
+                        </span>
+                    </div>
+                   
+				 <table class="table table-bordered" style="font-size:11px;table-layout: fixed; width: 100%;">
+                     <tr>	
+                        
+                     		<td name="td_sl" class="col-2"><strong>Invoice No.</strong></td>
+                            <td name="td_name" class="col-2"><span t-field="doc.name" style="white-space: nowrap;"></span></td>      
+                            <td name="td_sl" class="col-2"><strong>رائم الماثورة</strong></td>
+                            <td name="td_sl" class="col-2"><strong>Po No.</strong></td>
+                            <td class="col-2" name='td_po' ><strong><span t-field="doc.ref"/></strong></td>
+                            <td name="td_sl" class="col-2"><strong>رقم طلب الشراء</strong></td>
+                            <t t-if="not doc.journal_id.zatca_qr">
+                            <td class="col-3" rowspan="5">
+			                    <t t-if="doc.amount_tax != 0 and doc.l10n_sa_qr_code_str">
+							        <img
+							             style="display:block;"
+                                     t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', quote_plus(doc.l10n_sa_qr_code_str), 150,150)"/>
+							    </t>
+							
+							    <t t-elif="doc.amount_tax != 0 and doc.zatca_qr_base64">
+							        <img
+							            style="display:block;"
+                                     t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', quote_plus(doc.zatca_qr_base64), 150,150)"/>
+							    </t>
+			                </td>
+			                </t>
+                            </tr>
+                            <tr>	
+                     		<td name="td_sl" ><strong>Invoice Date</strong></td>
+                            <td name="td_name"><span t-field="doc.invoice_date" style="white-space: nowrap;"></span></td>      
+                            <td name="td_sl"><strong>تاريخ الفاتورة </strong></td>
+                            <td name="td_sl"><strong>Due date</strong></td>
+                            <td name="td_name"><span t-field="doc.invoice_date_due" style="white-space: nowrap;"></span></td> 
+                            <td name="td_sl"><strong>تاريخ الاستحقاق</strong></td>     
+                            <td/>
+                            </tr>
+                            <tr>	
+                     		<td name="td_sl"><strong>Salesman</strong></td>
+                            <td name="td_name"><span t-field="doc.invoice_user_id.name"></span></td>      
+                            <td name="td_sl"><strong>مندوب</strong></td>
+                            <td name="td_sl"><strong>Payment term.</strong></td>
+                             <td name="td_payment_term"><span t-field="doc.invoice_payment_term_id.name"></span></td>   
+                            <td name="td_sl"><strong>شروط الدفع</strong></td>
+                            </tr>
+                            <t t-if="not doc.journal_id.zatca_qr" >
+                            <tr>	
+	                     		<td name="td_contact_person" colspan="1"><strong>Contact Person</strong></td>
+								<td colspan="4" style="text-align:center;"><span t-if="doc.invoice_user_id.name"><span t-field="doc.invoice_user_id.name"/></span><span t-if="doc.partner_shipping_id.mobile"><span t-field="doc.partner_shipping_id.mobile"/></span></td>   
+                            	<td name="td_arabic_contact" colspan="1"><strong>اتصاليه</strong></td>
+                            </tr>
+                            <tr>	
+	                     		<td name="td_remarks" colspan="1"><strong>Remarks</strong></td>
+ 	                     		<td colspan="4" style="text-align:center;">
+								<span t-if="doc.partner_shipping_id"><span t-field="doc.partner_shipping_id.name"/></span></td>
+	                            <td name="td_remarks" colspan="1"><strong>ملاحظات</strong></td>
+                            </tr>
+                            </t>
+                            <t t-else="">
+                            <tr>	
+	                     		<td name="td_contact_person" colspan="1"><strong>Contact Person</strong></td>
+								<td colspan="3" style="text-align:center;"><span t-if="doc.invoice_user_id.name"><span t-field="doc.invoice_user_id.name"/></span><span t-if="doc.partner_shipping_id.mobile"><span t-field="doc.partner_shipping_id.mobile"/></span></td>   
+	                            
+	                            <td name="td_arabic_contact" colspan="1"><strong>اتصاليه</strong></td>
+                            </tr>
+                            <tr>	
+	                     		<td name="td_remarks" colspan="1"><strong>Remarks</strong></td>
+	                     		
+								<td colspan="3" style="text-align:center;"><span t-if="doc.partner_shipping_id"><span t-field="doc.partner_shipping_id.name"/></span></td><!-- <span t-field="doc.remarks"/></td> -->
+	                            <td name="td_remarks" colspan="1"><strong>ملاحظات</strong></td>
+                            </tr>
+                            
+                            </t>
+                            
+                            
+
+         </table>
+         
+         <table class="table table-bordered mt-1" style="font-size:11px;table-layout: fixed; width: 100%;">
+         	<t t-set="buyer_details" t-value="doc.get_buyer_details_report_values()" />
+				<t t-foreach="buyer_details" t-as="line">
+         			<tr>	
+                       
+                         <td class="col-1">
+                            <strong>Customer Name</strong>
+                        </td>
+
+                        <!-- English Value (print only if exists) -->
+                        <td class="col-3" t-if="line.get('name')">
+                            <span t-esc="line['name']" style="white-space: nowrap;"/>
+                        </td>
+
+                        <!-- Arabic Value (print only if Arabic exists) -->
+                        <td class="col-3" t-if="line.get('arabic_name')" style="direction:rtl; text-align:right;">
+                            <span t-esc="line['arabic_name']" style="white-space: nowrap;"/>
+                        </td>
+
+                        <!-- Arabic Label -->
+                        <td class="col-1">
+                            <strong style="white-space: nowrap;">اسم العميل</strong>
+                        </td>
+                        <td name="td_buyer_vat" class="col-2"><strong>Vat Number</strong></td>
+						<td name="td_buyer_vat_data" class="col-2"><span t-esc="line['vat']" ></span></td>
+						<!-- <td name="td_buyer_vat_data_arabic" class="col-2"><span t-esc="line['arabic_vat']" ></span></td> -->
+	                    <td name="td_buyer_vat_arabic" class="col-2"><strong >رقم التسجيل الضريبي</strong></td>
+	                    
+					</tr>
+					
+				
+                   
+                    <tr>	
+	             		
+	                    <td name="td_buyer_builiding" class="col-2"><strong>Building Number</strong></td>
+						<td name="td_buyer_builiding_data" class="col-2"><span t-esc="line['building_number']" style="white-space: nowrap;"></span></td>
+						<!-- <td name="td_buyer_builiding_data_arabic" class="col-2"><span t-esc="line['arabic_building']" style="white-space: nowrap;"></span></td> -->
+	                    <td name="td_buyer_building_arabic" class="col-2"><strong style="white-space: nowrap;">رقم المبنى</strong></td>
+	            
+
+                        <td name="td_buyer_cr_no" class="col-2"><strong>CR No</strong></td>
+	                    <td name="td_buyer_cr_no_data" class="col-2"><span t-field="doc.partner_id.company_registry" style="white-space: nowrap;"></span></td>      
+	                    <!-- <td name="td_builiding_data_arabic" class="col-2"><span t-esc="doc.company_id.arabic_building" style="white-space: nowrap;"></span></td>       -->
+	                    <td name="td_buyer_cr_no_arabic" class="col-2"><strong style="white-space: nowrap;">السجل التجاري</strong></td>
+	                   
+            
+					</tr>
+					
+					<tr>	
+	             		<td name="td_buyer_national" class="col-2"><strong>Address</strong></td>
+	                    <td name="td_buyer_national_data" class="col-2"><span t-field="doc.partner_id.contact_address" style="white-space: normal;"></span></td>      
+	                    <!-- <td name="td_code_data_arabic" class="col-2"><span t-esc="doc.company_id.country_id.code" style="white-space: nowrap;"></span></td>       -->
+	                    <td name="td_buyer_national_arabic" class="col-2"><strong style="white-space: nowrap;">العنوان</strong></td>
+	                     
+	                    <td name="td_buyer_street" class="col-2"><strong>Street</strong></td>
+						<td name="td_buyer_street_data" class="col-2"><span t-esc="line['street']" style="white-space: nowrap;"></span></td>
+						<!-- <td name="td_buyer_street_data_arabic" class="col-2"><span t-esc="line['arabic_street']" style="white-space: nowrap;"></span></td> -->
+	                    <td name="td_buyer_street_arabic" class="col-2"><strong style="white-space: nowrap;">اسم الشارع</strong></td> 
+					</tr>
+					<tr>	
+	                    <td name="td_buyer_district" class="col-2"><strong>District</strong></td>
+						<td name="td_buyer_district_data" class="col-2"><span t-esc="line['district']" style="white-space: nowrap;"></span></td>
+	                    <td name="td_buyer_district_arabic" class="col-2"><strong style="white-space: nowrap;">اسم الحي</strong></td>
+	                    
+                        <td name="td_buyer_phone" class="col-2"><strong>Contact Phone</strong></td>
+	                    <td name="td_buyer_phone_data" class="col-2"><span t-field="doc.partner_id.phone" style="white-space: nowrap;"></span></td>      
+	                    <td name="td_buyer_phone_arabic" class="col-2"><strong style="white-space: nowrap;">رقم الهاتف</strong></td>
+	                   
+                        
+					</tr>
+					<tr>	
+	             		
+	                    <td name="td_buyer_city" class="col-2"><strong>city</strong></td>
+						<td name="td_buyer_city_data" class="col-2"><span t-esc="line['city']" style="white-space: nowrap;"></span></td>
+	                    <td name="td_buyer_city_arabic" class="col-2"><strong style="white-space: nowrap;">اسم المدينة</strong></td>
+	                    
+                        <td name="td_buyer_mobile"  class="col-2"><strong>Mobile No</strong></td>
+	                    <td name="td_buyer_mobile_data" class="col-2"><span t-field="doc.partner_id.mobile" style="white-space: nowrap;"></span></td>      
+	                    <td name="td_buyer_mobile_arabic" class="col-2"><strong style="white-space: nowrap;">رقم الجوال</strong></td>
+	                   
+					</tr>
+					
+					<tr>	
+	             		
+	                    <td name="td_buyer_code" class="col-2"><strong>Country Code</strong></td>
+						<td name="td_buyer_code_data" class="col-2"><span t-esc="line['country']" style="white-space: nowrap;"></span></td>
+	                    <td name="td_buyer_code_arabic" class="col-2"><strong style="white-space: nowrap;">الدولي</strong></td>
+	                    
+                       
+                        <td name="td_buyer_sales_man" class="col-2"><strong>Sales Man</strong></td>
+	                    <td name="td_buyer_sales_man_data" class="col-2"><span t-esc="doc.invoice_user_id.name" style="white-space: nowrap;"></span></td>      
+	                    <td name="td_buyer_sales_man_arabic" class="col-2"><strong style="white-space: nowrap;">اسم البائع</strong></td> 
+                        
+					</tr>
+					
+               	</t>
+
+         </table>
+          <table class="table table-bordered mt-1" style="font-size:13px;">
+             <thead style="display: table-row-group">
+                 <tr>
+                <th name="th_sl" class="text-start">SL#<br/>رقم<br/></th>
+				<th name="th_code" class="text-start">CODE<br/>السعرة<br/></th>
+				<th name="th_description" class="text-start">DESCRIPTION<br/>البيان<br/></th>
+				<th name="th_uom" class="text-start">UOM<br/>الوحدة<br/></th>
+				<th name="th_qty" class="text-start">QTY<br/>العدد<br/></th>
+				<th name="th_rate" class="text-start">RATE<br/>سعر الوحدة<br/></th>
+				<th name="th_gross" class="text-start">GROSS<br/>المجموع الكلي<br/></th>
+				<th name="th_vat" class="text-start">VAT%<br/>%الضريبة<br/></th>
+				<th name="th_vat_sar" class="text-start">VAT SAR<br/>الضريبة<br/></th>
+				<th name="th_total" class="text-start">TOTAL<br/>المجموع<br/></th>
+
+                 </tr>
+             </thead>
+             <tbody class="sale_tbody">
+             	<t t-set="product_details" t-value="doc.get_product_data_report_values()"/>
+					<t t-foreach="product_details" t-as="data">
+                     <tr>	
+                    	<td name="td_sl"><span t-esc="data['sl']"></span></td>
+                        <td name="td_code"><span t-esc="data['code']" style="white-space: nowrap;"></span></td>      
+                        <td name="td_desc"><span t-esc="data['name']"></span><br/> <span t-esc="data['description_sale']"></span></td>
+                        <td name="td_uom">
+                           <t t-if="data['uom_display_name']">
+                        <span t-esc="data['uom_display_name']" style="white-space: nowrap;">
+                        
+                        </span>
+                        
+                        </t>
+                        <t t-else="">
+                             <span t-esc="data['uom']" style="white-space: nowrap;">
+                        
+                        </span>
+                        </t>
+                        </td>                       
+                        <td name="td_qty"><span t-esc="'{:.2f}'.format(data['qty'])" style="white-space: nowrap;"/></td>                       
+                        <td name="td_rate"><span t-esc="'{:.2f}'.format(data['rate'])"/></td>
+                        <td name="td_gross"><span t-esc="'{:.2f}'.format(data['gross'])"/></td>
+                        <td name="td_vat"><span t-esc="data['vat']"></span></td>
+                        <td name="td_vat_sar"><span t-esc="'{:.2f}'.format(data['vat_sar'])"/></td>
+                        <td name="td_total"><span t-esc="'{:.2f}'.format(data['total'])"/></td>
+					</tr>
+					</t>
+                         <tr style="height:20px">	
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                         </tr>
+                         <tr style="height:20px">
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                         </tr>
+                         <tr style="height:20px">	
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                     		<td/>
+                         </tr>
+                         
+                         
+             </tbody>
+         </table>
+         
+         </div>
+	    </t> 
+	    <p style="page-break-after:always"></p>
+	    </t>
+	   
+     </main>
+	    </t>
+	    
+	</template>
+	
+	
+	
+	<template id="sale_report_template_duplicate">
+	   	<t t-call="zb_jabra_tel_customizations.sale_report_template"/>
+		 <!-- <t t-foreach="docs" t-as="doc">
+		 <t t-foreach="doc.line_ids.sale_line_ids.order_id.picking_ids" t-as="o">
+		 <t t-if="o.state == 'done'">
+    		<t t-call="stock.report_delivery_document">
+    		</t>
+    		</t>
+    		</t>
+    		</t> -->
+	</template>
+	
+</odoo>
