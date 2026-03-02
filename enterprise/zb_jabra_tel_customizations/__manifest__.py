@@ -29,9 +29,7 @@
     "depends": ["base","account"],
     "data": [
         "views/account_move.xml",
-        # "views/res_company_views.xml",
         "report/invoice_report.xml",
-        "report/invoice_templates.xml",
         "report/sale_report_invoice.xml",
 
     ],

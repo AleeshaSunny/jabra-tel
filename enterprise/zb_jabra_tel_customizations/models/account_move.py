@@ -18,12 +18,12 @@ from odoo.tools import float_repr
 class AccountJournal(models.Model):
     _inherit = "account.journal"
     
-    zatca_qr = fields.Boolean('Hide Zatca QR')
+    jabra_qr = fields.Boolean('Hide jabra QR')
 
 
 class AccountMove(models.Model):
     _inherit = "account.move"
-    l10n_sa_qr_code_str = fields.Char(string='Zatka QR Code', compute='_compute_qr_code_str')
+    l10n_sa_qr_code_str = fields.Char(string='Jabra QR Code', compute='_compute_qr_code_str')
     expenses = fields.Boolean('Expenses')
     print_count=fields.Integer('Count')
     remarks=fields.Char('Remarks')
@@ -31,8 +31,8 @@ class AccountMove(models.Model):
     partner_balance = fields.Monetary(
         string="Balance", compute="_compute_partner_balance",currency_field="currency_id"
     )
-    zatca_qr_base64 = fields.Char(string="ZATCA QR (Base64)", readonly=True, copy=False)
-    zatca_hash = fields.Char(string="ZATCA Invoice Hash", readonly=True, copy=False)
+    jabra_qr_base64 = fields.Char(string="Jabra QR (Base64)", readonly=True, copy=False)
+    jabra_hash = fields.Char(string="Jabra Invoice Hash", readonly=True, copy=False)
 
     def get_report_head_values(self):
 
@@ -113,7 +113,7 @@ class AccountMove(models.Model):
             qr_value = base64.b64encode(qr_bytes).decode()
     
             super(type(move), move).write({
-                'zatca_qr_base64': qr_value
+                'jabra_qr_base64': qr_value
             })
 
     def _generate_invoice_hash(self):
@@ -122,7 +122,7 @@ class AccountMove(models.Model):
             hash_value = hashlib.sha256(base_string.encode()).hexdigest()
 
             super(AccountMove, move).write({
-                'zatca_hash': hash_value
+                'jabra_hash': hash_value
             })
 
   
@@ -133,7 +133,7 @@ class AccountMove(models.Model):
         record._generate_invoice_hash()
         return record
     def write(self, vals):
-        if set(vals).issubset({'zatca_qr_base64', 'zatca_hash'}):
+        if set(vals).issubset({'jabra_qr_base64', 'jabra_hash'}):
             return super().write(vals)
     
         res = super().write(vals)
@@ -144,8 +144,6 @@ class AccountMove(models.Model):
     def get_buyer_details_report_values(self):
         list=[]
         for rec in self:
-            # if rec.print_count > 0 and not self.env.user.has_group('zb_saudi_vat_customisations.group_duplicate_invoice'):
-            #     raise ValidationError(_("Only allowed to print once"))
             dict={
                 
                 'name':rec.partner_id.display_name or False,
@@ -217,63 +215,25 @@ class AccountMove(models.Model):
     
     
     def get_product_sum_report_values(self):
-        # def amount, currency_symbol):
-        #     # print(value, currency_symbol)
-        #     # return f"{currency_symbol} {value:,.2f}"
-        #     locale.setlocale(locale.LC_ALL, '')
-        #     # Format the amount as currency
-        #     formatted_amount = locale.currency(amount, symbol=True, grouping=True)
-        #     # Replace the currency symbol with the specified one
-        #     formatted_amount = formatted_amount.replace(locale.localeconv()['currency_symbol'], currency_symbol)
-        #     return formatted_amount
         net_amt=vat_total=tax_amount=discount=total_amt=0
         k={}
-        # currency_symbol = ""
         for rec in self:
             rec.print_count+=1
-            # if rec.currency_id:
-            #     currency_symbol = rec.currency_id.symbol
-            #     print(currency_symbol)
             for line in rec.invoice_line_ids:
                 if line.product_id == line.company_id.sale_discount_product_id:
                     discount = line.price_subtotal * -1
                 else:
                     total_amt+=line.price_subtotal
-                    # discount+=line.discount
                 tax_amount+=line.price_subtotal
                 vat_total=vat_total+(abs(line.price_total-line.price_subtotal))
                 net_amt+=line.price_total
-                # currency = self.currency_id
-    
-            # k = {
-            #     'total_amt': format_currency(total_amt, currency_symbol),
-            #     'discount': format_currency(discount, currency_symbol),
-            #     'tax_amount': format_currency(tax_amount, currency_symbol),
-            #     'vat': format_currency(vat_total, currency_symbol),
-            #     'net_amt': format_currency(net_amt, currency_symbol)
-            # }
-            # print(k)
-            # return k
             arabic_amt = rec.number_to_arabic_text(round(net_amt,2))
             amt_in_words = rec.number_to_englsih_text(round(net_amt,2))
             print(amt_in_words)
             return[{'total_amt':total_amt,'discount':discount,'tax_amount':tax_amount,'vat':vat_total,'net_amt':net_amt,'amt_in_words':amt_in_words,'arabic_amt':arabic_amt}]
                 
     
-    # def action_invoice_without_header_report(self):
-    #     for rec in self:
-    #         if not rec.vat_id:
-    #             raise ValidationError(_("ZATKA Invoice not Available"))
-    #     return self.env.ref('zb_saudi_vat_customisations.action_sale_report_without_header').report_action(self)
-    
-    
-    
-    # def action_sale_invoice_report(self):
-    #     for rec in self:
-    #         if not rec.vat_id:
-    #             raise ValidationError(_("ZATKA Invoice not Available"))
-    #     return self.env.ref('zb_saudi_vat_customisations.action_sale_report').report_action(self)
-        
+
     @api.depends('partner_id')
     def _compute_partner_balance(self):
         """Compute partner balance across all companies using SQL for posted entries."""
