@@ -26,7 +26,7 @@
         <t t-set="doc" t-value="docs and docs[0]"/>
 <t t-set="company" t-value="doc.company_id"/>
 <div class="header"
-     style="border-bottom:1px solid #000; padding:10px 15px; margin:0;">
+     style="border-bottom:1px solid #ccc; padding:10px 15px; margin:0;">
 <!-- <div class="header" style="margin-bottom: 0px !important; padding-bottom: 0px !important;"> -->
     <!-- <div style="padding:12px;"> -->
     <div style="padding:0px 12px 0px 12px;">
@@ -34,7 +34,7 @@
             <tr>
 
                 <!-- LEFT SIDE (Arabic) -->
-                <td style="width:33%; text-align:right; direction:rtl; 
+                <td style="width:33%; text-align:left; direction:rtl; 
                            font-size:16px; vertical-align:top; border:none;">
                     <strong>
                         <span t-esc="company.name"/>
@@ -45,8 +45,9 @@
                     <span t-esc="company.zip"/><br/>
                     <span t-esc="company.country_id.name"/><br/>
 
+                    
                     <t t-if="company.vat">
-                        الرقم الضريبي :
+                        VAT No :
                         <span t-esc="company.vat"/>
                     </t>
                 </td>
@@ -61,7 +62,7 @@
                 </td>
 
                 <!-- RIGHT SIDE (English) -->
-                <td style="width:33%; text-align:left; 
+                <td style="width:33%; text-align:right; direction:rtl;
                            font-size:16px; vertical-align:top; border:none;">
                     <strong>
                         <span t-esc="company.name"/>
@@ -73,7 +74,7 @@
                     <span t-esc="company.country_id.name"/><br/>
 
                     <t t-if="company.vat">
-                        VAT No :
+                        الرقم الضريبي :
                         <span t-esc="company.vat"/>
                     </t>
                 </td>
@@ -113,6 +114,13 @@
 	<t t-call="zb_jabra_tel_customizations.external_layout_standard_new">
          <main>
          <div class="page">
+            <style>
+                .table-bordered,
+                .table-bordered th,
+                .table-bordered td {
+                    border: 0.5px solid #bbb !important;
+                }
+            </style>
 
         <t t-foreach="docs" t-as="doc">
 	    <t>
@@ -122,7 +130,7 @@
 
                    <div style="text-align:center; margin-top:20px; margin-bottom:20px;">
                         <span style="font-size:16px; font-weight:600;">
-                            Tax Invoice
+                            TAX INVOICE
                         </span>
                         
                         <span style="font-size:16px; font-weight:600; direction:rtl;">
@@ -165,12 +173,12 @@
                             <td/>
                             </tr>
                             <tr>	
-                     		<td name="td_sl"><strong>Salesman</strong></td>
+                     		<!-- <td name="td_sl"><strong>Salesman</strong></td>
                             <td name="td_name"><span t-field="doc.invoice_user_id.name"></span></td>      
-                            <td name="td_sl"><strong>مندوب</strong></td>
-                            <td name="td_sl"><strong>Payment term.</strong></td>
-                             <td name="td_payment_term"><span t-field="doc.invoice_payment_term_id.name"></span></td>   
-                            <td name="td_sl"><strong>شروط الدفع</strong></td>
+                            <td name="td_sl"><strong>مندوب</strong></td> -->
+                            <td name="td_payment_term" colspan="1"><strong>Payment term.</strong></td>
+                             <td colspan="4" style="text-align:center;"><span t-field="doc.invoice_payment_term_id.name"></span></td>   
+                            <td name="td_payment_term_arabic" colspan="1"><strong>شروط الدفع</strong></td>
                             </tr>
                             <t t-if="not doc.journal_id.jabra_qr" >
                             <tr>	
@@ -180,8 +188,8 @@
                             </tr>
                             <tr>	
 	                     		<td name="td_remarks" colspan="1"><strong>Remarks</strong></td>
- 	                     		<td colspan="4" style="text-align:center;">
-								<span t-if="doc.partner_shipping_id"><span t-field="doc.partner_shipping_id.name"/></span></td>
+ 	                     		<td colspan="4" style="text-align:center;"/>
+								<!-- <span t-if="doc.partner_shipping_id"><span t-field="doc.partner_shipping_id.name"/></span></td> -->
 	                            <td name="td_remarks" colspan="1"><strong>ملاحظات</strong></td>
                             </tr>
                             </t>
@@ -216,7 +224,7 @@
 
                         <!-- English Value (print only if exists) -->
                         <td class="col-3" t-if="line.get('name')">
-                            <span t-esc="line['name']" style="white-space: nowrap;"/>
+                            <span t-esc="line['name']" style="white-space: normal;"/>
                         </td>
 
                         <!-- Arabic Value (print only if Arabic exists) -->
@@ -277,7 +285,7 @@
 					</tr>
 					<tr>	
 	             		
-	                    <td name="td_buyer_city" class="col-2"><strong>city</strong></td>
+	                    <td name="td_buyer_city" class="col-2"><strong>City</strong></td>
 						<td name="td_buyer_city_data" class="col-2"><span t-esc="line['city']" style="white-space: nowrap;"></span></td>
 	                    <td name="td_buyer_city_arabic" class="col-2"><strong style="white-space: nowrap;">اسم المدينة</strong></td>
 	                    
@@ -307,7 +315,7 @@
              <thead style="display: table-row-group">
                  <div style="text-align:center; margin-top:20px; margin-bottom:20px;">
                         <span style="font-size:16px; font-weight:600;">
-                            Line Items
+                            LINE ITEMS
                         </span>
                         
                         <span style="font-size:16px; font-weight:600; direction:rtl;">
@@ -356,7 +364,7 @@
                         <td name="td_total"><span t-esc="'{:.2f}'.format(data['total'])"/></td>
 					</tr>
 					</t>
-                         <tr style="height:20px">	
+                         <!-- <tr style="height:20px">	
                      		<td/>
                      		<td/>
                      		<td/>
@@ -391,7 +399,7 @@
                      		<td/>
                      		<td/>
                      		<td/>
-                         </tr>
+                         </tr> -->
                          
                          
              </tbody>

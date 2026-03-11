@@ -20,17 +20,21 @@
 ##############################################################################
 {
     "name": "Jabra Tel Customizations",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.2",
     "category": "Accounting",
     'author': 'ZestyBeanz Technologies',
     "website": "www.zbeanztech.com",
     'license': "LGPL-3",
     "summary": "Custom Simplified Tax Invoice for Jabra Tel",
-    "depends": ["base","account"],
+    "depends": ["base","account","sale","purchase"],
     "data": [
         "views/account_move.xml",
+        "views/purchase_order.xml",
+        "views/sale_order.xml",
         "report/invoice_report.xml",
         "report/sale_report_invoice.xml",
+        "report/report_fix.xml",
+        "report/sale_order_report.xml",
 
     ],
     "installable": True,

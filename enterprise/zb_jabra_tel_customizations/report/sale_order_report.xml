@@ -1,0 +1,36 @@
+<odoo>
+    <data>
+
+
+    <template id="sale_report_saleorder_raw_company_fix"
+              inherit_id="sale.report_saleorder_raw">
+
+        <xpath expr="//t[@t-call='web.html_container']" position="before">
+            <t t-set="company" t-value="docs and docs[0].company_id"/>
+        </xpath>
+
+    </template>
+        <!-- Add Qty Total -->
+   
+    <template id="sale_report_qty_total"
+              inherit_id="sale.report_saleorder_document">
+
+        <xpath expr="//tbody" position="after">
+            <tfoot>
+                <tr>
+                    <td><strong>Total</strong></td>
+
+                    <td class="text-end">
+                        <strong>
+                            <t t-esc="sum(line.product_uom_qty for line in doc.order_line)"/>
+                        </strong>
+                    </td>
+
+                    <td colspan="5"/>
+                </tr>
+            </tfoot>
+        </xpath>
+
+    </template>
+    </data>
+</odoo>
